@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "881372503015",
+    "firebase_url": "https://poziomfire.firebaseio.com",
+    "project_id": "poziomfire",
+    "storage_bucket": "poziomfire.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881372503015:android:15424a05111bf6e8",
+        "android_client_info": {
+          "package_name": "com.poziomlabs.poziomfire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881372503015-o8nt82o40noim7a8v1md860dlus735bp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.poziomlabs.poziomfire",
+            "certificate_hash": "9bcc1dfc69c6b7e958cd4a2213095b3ab15436b8"
+          }
+        },
+        {
+          "client_id": "881372503015-oovksd9g4r7q7g2ipqa78jdub3ghqp3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQDDr99DAw9P0Alt8Q3HfDGB3a4mehFq8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881372503015-oovksd9g4r7q7g2ipqa78jdub3ghqp3m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

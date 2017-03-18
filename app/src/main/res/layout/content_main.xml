@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.poziomlabs.firebasestore.MainActivity"
+    tools:showIn="@layout/activity_main">
+    <EditText
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/reviewTitle"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp" />
+
+    <EditText
+        android:id="@+id/reviewBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/reviewTitle"
+        android:layout_alignRight="@+id/reviewTitle"
+        android:layout_alignEnd="@+id/reviewTitle"
+        android:layout_marginTop="81dp" />
+
+    <Button
+        android:id="@+id/saveReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="131dp"
+        android:text="Save"
+        android:layout_below="@+id/reviewBody"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/seeReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/saveReview"
+        android:layout_alignEnd="@+id/reviewBody"
+        android:layout_alignRight="@+id/reviewBody"
+        android:text="Get" />
+
+
+</RelativeLayout>
