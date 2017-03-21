@@ -1,9 +1,6 @@
 package com.poziomlabs.firebasestore;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.Manifest;
 import android.net.wifi.ScanResult;
@@ -18,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,13 +27,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseReference mMyRef;
-    private BroadcastReceiver mReceiver;
-    private IntentFilter mIntentFilter;
     private WifiManager mWifi;
     private EditText mTitle;
     private EditText mBody;
     private List<ScanResult> mResults;
-    private boolean mIsRegistered;
 
     private static final int REQUEST_INTERNET_ACCESS = 1001;
 
@@ -51,10 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getInternetPermission();
         }
-
+        mWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         initWifi();
-        mWifi.startScan();
-
         mTitle = (EditText) findViewById(R.id.reviewTitle);
         mBody = (EditText) findViewById(R.id.reviewBody);
         Button save = (Button) findViewById(R.id.saveReview);
@@ -68,53 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if(!mIsRegistered) {
-            registerReceiver(mReceiver, mIntentFilter);
-            mIsRegistered = true;
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(!mIsRegistered) {
-            registerReceiver(mReceiver, mIntentFilter);
-            mIsRegistered = true;
-        }
-    }
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        if(!mIsRegistered) {
-            registerReceiver(mReceiver, mIntentFilter);
-            mIsRegistered = true;
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(mIsRegistered) {
-            unregisterReceiver(mReceiver);
-            mIsRegistered = false;
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if(mIsRegistered) {
-            unregisterReceiver(mReceiver);
-            mIsRegistered = false;
-        }
-    }
-
-    @Override
     public void onClick(View view) {
         if(view.getId() == R.id.saveReview) {
+            if(!mWifi.isWifiEnabled())  initWifi();
             if(mResults != null) {
                 Review review = new Review(mTitle.getText().toString(), mBody.getText().toString());
                 for (ScanResult result : mResults) {
@@ -151,20 +98,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initWifi() {
-        mWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if(!mWifi.isWifiEnabled()) {
-            Toast.makeText(this, "Wifi must be kept on!", Toast.LENGTH_SHORT).show();
-            mWifi.setWifiEnabled(true);
-        }
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mResults = mWifi.getScanResults();
-            }
-        };
-        mIntentFilter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        registerReceiver(mReceiver, mIntentFilter);
-        mIsRegistered = true;
+        mWifi.setWifiEnabled(true);
+        mWifi.startScan();
+        mResults = mWifi.getScanResults();
     }
 
     private void getInternetPermission() {
