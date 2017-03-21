@@ -1,6 +1,17 @@
 package com.poziomlabs.firebasestore;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.Manifest;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,8 +26,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity {
-    DatabaseReference mMyRef;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private DatabaseReference mMyRef;
+    private BroadcastReceiver mReceiver;
+    private IntentFilter mIntentFilter;
+    private WifiManager mWifi;
+    private EditText mTitle;
+    private EditText mBody;
+    private List<ScanResult> mResults;
+    private boolean mIsRegistered;
+
+    private static final int REQUEST_INTERNET_ACCESS = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,42 +48,137 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final EditText title = (EditText) findViewById(R.id.reviewTitle);
-        final EditText body = (EditText) findViewById(R.id.reviewBody);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getInternetPermission();
+        }
+
+        initWifi();
+        mWifi.startScan();
+
+        mTitle = (EditText) findViewById(R.id.reviewTitle);
+        mBody = (EditText) findViewById(R.id.reviewBody);
         Button save = (Button) findViewById(R.id.saveReview);
         Button get = (Button) findViewById(R.id.seeReview);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mMyRef = database.getReference().child("Users");
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Review review = new Review(title.getText().toString(), body.getText().toString());
-                Toast.makeText(getApplicationContext(), review.toString(), Toast.LENGTH_LONG).show();
-                mMyRef.child(""+ review.getReviewId()).setValue(review);
-            }
-        });
+        save.setOnClickListener(this);
+        get.setOnClickListener(this);
+    }
 
-        get.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMyRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Log.d("JSON: ", "" + snapshot.getValue());
-                            Review review = snapshot.getValue(Review.class);
-                            Log.d("Review Obj Val: ", review.toString());
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!mIsRegistered) {
+            registerReceiver(mReceiver, mIntentFilter);
+            mIsRegistered = true;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!mIsRegistered) {
+            registerReceiver(mReceiver, mIntentFilter);
+            mIsRegistered = true;
+        }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        if(!mIsRegistered) {
+            registerReceiver(mReceiver, mIntentFilter);
+            mIsRegistered = true;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mIsRegistered) {
+            unregisterReceiver(mReceiver);
+            mIsRegistered = false;
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mIsRegistered) {
+            unregisterReceiver(mReceiver);
+            mIsRegistered = false;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.saveReview) {
+            if(mResults != null) {
+                Review review = new Review(mTitle.getText().toString(), mBody.getText().toString());
+                for (ScanResult result : mResults) {
+                    int level = WifiManager.calculateSignalLevel(result.level, 5);
+                    if(level > 2) {
+                        Log.d("Wifi Selected: " + result.SSID, "" + level);
+                        review.setBssid(result.BSSID);
+                        mMyRef.child(result.BSSID).child(review.getReviewId()).setValue(review);
+                    } else {
+                        Log.d("Wifi Rejected: " + result.SSID, "" + level);
+                    }
+                }
+            }
+        }
+        if(view.getId() == R.id.seeReview) {
+            mMyRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        for(DataSnapshot snapshot1: snapshot.getChildren()) {
+                            Log.d("JSON: ", "" + snapshot1.getValue());
+                            Review review = snapshot1.getValue(Review.class);
+                            Log.d("Review: ", review.toString());
                         }
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
-                    }
-                });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
+        }
+    }
+
+    private void initWifi() {
+        mWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if(!mWifi.isWifiEnabled()) {
+            Toast.makeText(this, "Wifi must be kept on!", Toast.LENGTH_SHORT).show();
+            mWifi.setWifiEnabled(true);
+        }
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mResults = mWifi.getScanResults();
             }
-        });
+        };
+        mIntentFilter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        registerReceiver(mReceiver, mIntentFilter);
+        mIsRegistered = true;
+    }
+
+    private void getInternetPermission() {
+        boolean hasPermission1 = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED);
+        boolean hasPermission2 = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.CHANGE_WIFI_STATE) == PackageManager.PERMISSION_GRANTED);
+        boolean hasPermission3 = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission1 || !hasPermission2 || !hasPermission3) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.INTERNET, Manifest.permission.CHANGE_WIFI_STATE,
+                            Manifest.permission.ACCESS_WIFI_STATE},
+                    REQUEST_INTERNET_ACCESS);
+        }
     }
 }
