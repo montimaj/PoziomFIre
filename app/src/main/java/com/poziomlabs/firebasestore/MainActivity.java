@@ -12,9 +12,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.View;;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,16 +23,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mMyRef;
     private WifiManager mWifi;
     private EditText mTitle;
     private EditText mBody;
     private List<ScanResult> mResults;
+    private CustomAdapter mCustomAdapter;
 
+    private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static final int REQUEST_INTERNET_ACCESS = 1001;
 
     @Override
@@ -46,61 +50,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         mWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         initWifi();
+        initFirebase();
+
         mTitle = (EditText) findViewById(R.id.reviewTitle);
         mBody = (EditText) findViewById(R.id.reviewBody);
-        Button save = (Button) findViewById(R.id.saveReview);
-        Button get = (Button) findViewById(R.id.seeReview);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        mCustomAdapter = new CustomAdapter(this, R.layout.content_review, sReviewList);
+        ImageButton save = (ImageButton) findViewById(R.id.saveReview);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mMyRef = database.getReference().child("Users");
+        listView.setAdapter(mCustomAdapter);
 
-        save.setOnClickListener(this);
-        get.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-        if(view.getId() == R.id.saveReview) {
-            if(!mWifi.isWifiEnabled())  initWifi();
-            if(mResults != null) {
-                Review review = new Review(mTitle.getText().toString(), mBody.getText().toString());
-                for (ScanResult result : mResults) {
-                    int level = WifiManager.calculateSignalLevel(result.level, 5);
-                    if(level > 2) {
-                        Log.d("Wifi Selected: " + result.SSID, "" + level);
-                        review.setBssid(result.BSSID);
-                        mMyRef.child(result.BSSID).child(review.getReviewId()).setValue(review);
-                    } else {
-                        Log.d("Wifi Rejected: " + result.SSID, "" + level);
-                    }
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!mWifi.isWifiEnabled())  initWifi();
+                String title = mTitle.getText().toString();
+                String body = mBody.getText().toString();
+                if(mResults != null && title.length() > 0 && body.length() > 0) {
+                    Review review = new Review(title, body);
+                    saveReview(review);
                 }
             }
-        }
-        if(view.getId() == R.id.seeReview) {
-            mMyRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        for(DataSnapshot snapshot1: snapshot.getChildren()) {
-                            Log.d("JSON: ", "" + snapshot1.getValue());
-                            Review review = snapshot1.getValue(Review.class);
-                            Log.d("Review: ", review.toString());
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            });
-        }
+        });
     }
 
     private void initWifi() {
         mWifi.setWifiEnabled(true);
         mWifi.startScan();
         mResults = mWifi.getScanResults();
+    }
+
+    private void initFirebase() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        mMyRef = database.getReference().child("Users");
+        mMyRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if(snapshot.hasChildren()) {
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                Review review = snapshot1.getValue(Review.class);
+                                if (!sReviewList.contains(review)) {
+                                    sReviewList.add(review);
+                                    mCustomAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        } else removeList();
+                    }
+                } else removeList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void saveReview(Review review) {
+        for (ScanResult result : mResults) {
+            int level = WifiManager.calculateSignalLevel(result.level, 5);
+            if(level > 2) {
+                Log.d("Wifi Selected: " + result.SSID, "" + level);
+                review.setBssid(result.BSSID);
+                mMyRef.child(result.BSSID).child(review.getReviewId()).setValue(review);
+            } else {
+                Log.d("Wifi Rejected: " + result.SSID, "" + level);
+            }
+        }
     }
 
     private void getInternetPermission() {
@@ -117,4 +135,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     REQUEST_INTERNET_ACCESS);
         }
     }
+
+    private void removeList() {
+        sReviewList.clear();
+        mCustomAdapter.clear();
+        mCustomAdapter.notifyDataSetChanged();
+    }
+
+    static ArrayList<Review> getReviewList() { return sReviewList; }
 }

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PoziomFire</string>
     <string name="action_settings">Settings</string>
+    <string name="title">Title</string>
+    <string name="review">Review</string>
+    <string name="save">Save</string>
+    <string name="get">Get</string>
 </resources>

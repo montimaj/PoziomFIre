@@ -31,8 +31,21 @@ class Review {
 
     @Override
     public String toString() {
-        return mReviewId + "\n" + mBssid + "\n" + mReviewTitle + "\n" + mReviewBody;
+        return mReviewTitle + "\n" + mReviewBody;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Review other = (Review) obj;
+        return mReviewId.equals(other.mReviewId);
+    }
+
 
     void setTitle(String title) { mReviewTitle = title; }
     void setBody(String body) { mReviewBody = body; }
