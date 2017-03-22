@@ -3,15 +3,15 @@ package com.poziomlabs.firebasestore;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-class Review {
-    private String mReviewTitle;
-    private String mReviewBody;
-    private String mBssid;
-    private String mReviewId;
+public class Review {
+    public String mReviewTitle;
+    public String mReviewBody;
+    public String mBssid;
+    public String mReviewId;
 
-    Review() {}
+    public Review() {}
 
-    Review(String title, String body) {
+    public Review(String title, String body) {
         mReviewTitle = title;
         mReviewBody = body;
         mReviewId = generateReviewId();
@@ -47,13 +47,13 @@ class Review {
     }
 
 
-    void setTitle(String title) { mReviewTitle = title; }
-    void setBody(String body) { mReviewBody = body; }
-    void setBssid(String bssid) { mBssid = bssid; }
-    void setReviewId(String id) { mReviewId = id; }
+    public void setTitle(String title) { mReviewTitle = title; }
+    public void setBody(String body) { mReviewBody = body; }
+    public void setBssid(String bssid) { mBssid = bssid; }
+    public void setReviewId(String id) { mReviewId = id; }
 
-    String getTitle() { return mReviewTitle; }
-    String getBody() { return mReviewBody; }
-    String getBssid() { return mBssid; }
-    String getReviewId() { return mReviewId; }
+    public String getTitle() { return mReviewTitle; }
+    public String getBody() { return mReviewBody; }
+    public String getBssid() { return mBssid; }
+    public String getReviewId() { return mReviewId; }
 }
