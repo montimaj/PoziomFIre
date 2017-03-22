@@ -3,15 +3,15 @@ package com.poziomlabs.firebasestore;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-public class Review {
-    public String mReviewTitle;
-    public String mReviewBody;
-    public String mBssid;
-    public String mReviewId;
+class Review {
+    private String mReviewTitle;
+    private String mReviewBody;
+    private String mBssid;
+    private String mReviewId;
 
-    public Review() {}
+    Review() {}
 
-    public Review(String title, String body) {
+    Review(String title, String body) {
         mReviewTitle = title;
         mReviewBody = body;
         mReviewId = generateReviewId();
@@ -20,6 +20,9 @@ public class Review {
     private String generateReviewId() {
         SecureRandom random = new SecureRandom();
         StringBuilder stringBuilder = new StringBuilder(new BigInteger(48, random).toString(32));
+        while(stringBuilder.length() > 6) {
+            stringBuilder.deleteCharAt(random.nextInt(stringBuilder.length()));
+        }
         for (int i = 0; i < stringBuilder.length(); i++) {
             char ch = stringBuilder.charAt(i);
             if (Character.isLetter(ch) && Character.isLowerCase(ch) && random.nextFloat() < 0.5) {
@@ -30,9 +33,7 @@ public class Review {
     }
 
     @Override
-    public String toString() {
-        return mReviewTitle + "\n" + mReviewBody;
-    }
+    public String toString() { return mReviewTitle + "\n" + mReviewBody; }
 
     @Override
     public boolean equals(Object obj) {
