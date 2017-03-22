@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mBody;
     private List<ScanResult> mResults;
     private CustomAdapter mCustomAdapter;
+    private ArrayList<String> mSelectedWifis;
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static final int REQUEST_INTERNET_ACCESS = 1001;
@@ -78,6 +79,16 @@ public class MainActivity extends AppCompatActivity {
         mWifi.setWifiEnabled(true);
         mWifi.startScan();
         mResults = mWifi.getScanResults();
+        mSelectedWifis = new ArrayList<>();
+        for (ScanResult result : mResults) {
+            int level = WifiManager.calculateSignalLevel(result.level, 5);
+            if(level > 2) {
+                Log.d("Wifi Selected: " + result.SSID, "" + level);
+                mSelectedWifis.add(result.BSSID);
+            } else {
+                Log.d("Wifi Rejected: " + result.SSID, "" + level);
+            }
+        }
     }
 
     private void initFirebase() {
@@ -91,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         if(snapshot.hasChildren()) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 Review review = snapshot1.getValue(Review.class);
-                                if (!sReviewList.contains(review)) {
+                                if (mSelectedWifis.contains(review.getBssid()) && !sReviewList.contains(review)) {
                                     sReviewList.add(review);
                                     mCustomAdapter.notifyDataSetChanged();
                                 }
@@ -109,15 +120,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveReview(Review review) {
-        for (ScanResult result : mResults) {
-            int level = WifiManager.calculateSignalLevel(result.level, 5);
-            if(level > 2) {
-                Log.d("Wifi Selected: " + result.SSID, "" + level);
-                review.setBssid(result.BSSID);
-                mMyRef.child(result.BSSID).child(review.getReviewId()).setValue(review);
-            } else {
-                Log.d("Wifi Rejected: " + result.SSID, "" + level);
-            }
+        for (String bssid : mSelectedWifis) {
+            review.setBssid(bssid);
+            mMyRef.child(bssid).child(review.getReviewId()).setValue(review);
         }
     }
 
