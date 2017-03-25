@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-class CustomAdapter extends ArrayAdapter<Review> {
+class ReviewAdapter extends ArrayAdapter<Review> {
 
     private Activity mActivity;
 
-    CustomAdapter(Activity activity, int textViewResourceId, ArrayList<Review> arrayList) {
+    ReviewAdapter(Activity activity, int textViewResourceId, ArrayList<Review> arrayList) {
         super(activity, textViewResourceId, arrayList);
         mActivity = activity;
     }
@@ -25,7 +25,7 @@ class CustomAdapter extends ArrayAdapter<Review> {
     @Override
     public int getCount() {
         super.getCount();
-        return MainActivity.getReviewList().size();
+        return MainFragment.getReviewList().size();
     }
 
     @Override
@@ -43,7 +43,7 @@ class CustomAdapter extends ArrayAdapter<Review> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ArrayList<Review> reviewList = MainActivity.getReviewList();
+        ArrayList<Review> reviewList = MainFragment.getReviewList();
 
         if(!reviewList.isEmpty()) {
             Review review = reviewList.get(position);

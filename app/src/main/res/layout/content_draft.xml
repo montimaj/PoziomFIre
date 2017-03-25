@@ -6,7 +6,7 @@
     android:padding="6dip">
 
     <TextView
-        android:id="@+id/review"
+        android:id="@+id/draft"
         android:textSize="20sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

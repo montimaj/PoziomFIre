@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listView"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#abcd"
+        android:divider="@color/colorPrimaryDark"
+        android:dividerHeight="1px"
+        android:listSelector="@android:drawable/list_selector_background"
+        android:layout_below="@+id/floatingActionButton2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="13dp"
+        android:clickable="true"
+        app:backgroundTint="@android:color/background_light"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_action_review" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/floatingActionButton2"
+        android:clickable="true"
+        app:backgroundTint="@android:color/background_light"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_action_drafts"
+        tools:ignore="RelativeOverlap" />
+
+    <ProgressBar
+        android:id="@+id/Progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+
+</RelativeLayout>

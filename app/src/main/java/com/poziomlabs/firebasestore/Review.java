@@ -1,39 +1,23 @@
 package com.poziomlabs.firebasestore;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
 class Review {
-    private String mReviewTitle;
-    private String mReviewBody;
     private String mBssid;
-    private String mReviewId;
+    private boolean mModeratorFlag;
+
+    protected String mReviewTitle;
+    protected String mReviewBody;
+    protected String mReviewId;
+    protected float mRating;
 
     Review() {}
 
-    Review(String title, String body) {
-        mReviewTitle = title;
-        mReviewBody = body;
-        mReviewId = generateReviewId();
-    }
-
-    private String generateReviewId() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder stringBuilder = new StringBuilder(new BigInteger(48, random).toString(32));
-        while(stringBuilder.length() > 6) {
-            stringBuilder.deleteCharAt(random.nextInt(stringBuilder.length()));
-        }
-        for (int i = 0; i < stringBuilder.length(); i++) {
-            char ch = stringBuilder.charAt(i);
-            if (Character.isLetter(ch) && Character.isLowerCase(ch) && random.nextFloat() < 0.5) {
-                stringBuilder.setCharAt(i, Character.toUpperCase(ch));
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     @Override
-    public String toString() { return mReviewTitle + "\n" + mReviewBody; }
+    public String toString() {
+        String s = mReviewTitle;
+        s += mReviewBody.length() == 2 ? "" : "\n" + mReviewBody;
+        s += "\nRating: " + mRating;
+        return s;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -44,14 +28,17 @@ class Review {
         return mReviewId.equals(other.mReviewId);
     }
 
-
     public void setTitle(String title) { mReviewTitle = title; }
     public void setBody(String body) { mReviewBody = body; }
     public void setBssid(String bssid) { mBssid = bssid; }
     public void setReviewId(String id) { mReviewId = id; }
+    public void setModeratorFlag(boolean value) { mModeratorFlag = value; }
+    public void setRating(float rating) { mRating = rating; }
 
     public String getTitle() { return mReviewTitle; }
     public String getBody() { return mReviewBody; }
     public String getBssid() { return mBssid; }
     public String getReviewId() { return mReviewId; }
+    public float getRating() { return mRating; }
+    public boolean getModeratorFlag() { return mModeratorFlag; }
 }

@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">PoziomFire</string>
     <string name="action_settings">Settings</string>
-    <string name="title">Title</string>
-    <string name="review">Review</string>
+    <string name="title">Could you tell us the name of the place? </string>
+    <string name="reviewGood">Tell us all the good things you experienced</string>
+    <string name="reviewCons">Any bad experience?</string>
+    <string name="reviewOther">Do you have any other comments?</string>
     <string name="save">Save</string>
     <string name="get">Get</string>
 </resources>
