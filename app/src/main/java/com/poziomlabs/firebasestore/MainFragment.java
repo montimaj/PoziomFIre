@@ -26,13 +26,13 @@ import java.util.List;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    private DatabaseReference mMyRef;
     private WifiManager mWifi;
     private ProgressBar mProgressBar;
     private ReviewAdapter mReviewAdapter;
     private ArrayList<String> mSelectedWifis;
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
+    private static DatabaseReference sMyRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +66,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if(view.getId() == R.id.floatingActionButton2) {
             LocalReview review = new LocalReview();
             review.setSelectedWifis(mSelectedWifis);
-            review.setDatabaseReference(mMyRef);
             ReviewFragment reviewFragment = new ReviewFragment();
             reviewFragment.setReview(review);
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -99,8 +98,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private void initFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mMyRef = database.getReference().child("Users");
-        mMyRef.addValueEventListener(new ValueEventListener() {
+        sMyRef = database.getReference().child("Users");
+        sMyRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChildren()) {
@@ -134,4 +133,5 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     static ArrayList<Review> getReviewList() { return sReviewList; }
+    static DatabaseReference getDatabaseReference() { return sMyRef; }
 }

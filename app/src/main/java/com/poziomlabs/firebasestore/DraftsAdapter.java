@@ -1,6 +1,7 @@
 package com.poziomlabs.firebasestore;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class DraftsAdapter extends ArrayAdapter<LocalReview> {
+class DraftsAdapter extends ArrayAdapter<LocalReview> {
     private Activity mActivity;
 
     DraftsAdapter(Activity activity, int textViewResourceId, ArrayList<LocalReview> arrayList) {
@@ -27,8 +28,9 @@ public class DraftsAdapter extends ArrayAdapter<LocalReview> {
         return ReviewFragment.getDraftList().size();
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         ViewHolder viewHolder;
         if (convertView == null) {

@@ -13,8 +13,10 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ReviewFragment extends Fragment {
     private EditText mTitle;
@@ -27,8 +29,8 @@ public class ReviewFragment extends Fragment {
     private SharedPreferences mSharedPrefs;
     private boolean mIsSaved;
 
-    private static final String[] KEY_SET = {"Title", "Body1", "Body2", "Body3", "Rating"};
     private static ArrayList<LocalReview> sDraftList = new ArrayList<>();
+    static final String[] KEY_SET = {"Title", "Body1", "Body2", "Body3", "Rating"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,19 +92,23 @@ public class ReviewFragment extends Fragment {
             mLocalReview.setBody(body);
             mLocalReview.setRating(rating);
             sDraftList.add(mLocalReview);
+
             editor.putString(KEY_SET[0], title);
             editor.putString(KEY_SET[1], body1);
             editor.putString(KEY_SET[2], body2);
             editor.putString(KEY_SET[3], body3);
             editor.putFloat(KEY_SET[4], rating);
             editor.apply();
+            saveDraft();
         } else {
             if(sDraftList.contains(mLocalReview))   sDraftList.remove(mLocalReview);
-            for(String keys: KEY_SET)   editor.remove(keys);
+            editor.clear().apply();
+            saveDraft();
         }
     }
 
     void setReview(LocalReview review) { mLocalReview = review; }
+    static void setDraftList(ArrayList<LocalReview> drafts) { sDraftList = drafts; }
     static ArrayList<LocalReview> getDraftList() { return sDraftList; }
 
     private void saveReview() {
@@ -113,11 +119,23 @@ public class ReviewFragment extends Fragment {
         review.setRating(mLocalReview.getRating());
         review.setModeratorFlag(false);
         review.setReviewId(mLocalReview.getReviewId());
-        DatabaseReference ref = mLocalReview.getDatabaseReference();
+        DatabaseReference ref = MainFragment.getDatabaseReference();
         for (String bssid : wifis) {
             review.setBssid(bssid);
             ref.child(bssid).child(review.getReviewId()).setValue(review);
         }
         mIsSaved = true;
+    }
+
+    private void saveDraft() {
+        mSharedPrefs = getActivity().getSharedPreferences("Drafts", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        HashSet<String> draftSet = new HashSet<>();
+        for(LocalReview review: sDraftList) {
+            String gson = new Gson().toJson(review);
+            draftSet.add(gson);
+        }
+        editor.putStringSet("Draft_Set", draftSet);
+        editor.apply();
     }
 }

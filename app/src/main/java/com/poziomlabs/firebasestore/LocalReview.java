@@ -1,7 +1,5 @@
 package com.poziomlabs.firebasestore;
 
-import com.google.firebase.database.DatabaseReference;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -9,8 +7,7 @@ import java.util.Date;
 
 class LocalReview extends Review {
     private ArrayList<String> mSelectedWifis;
-    private DatabaseReference mMyRef;
-    private Date mDate;
+    private String mDate;
 
     LocalReview() { mReviewId = generateReviewId(); }
 
@@ -25,13 +22,12 @@ class LocalReview extends Review {
 
     @Override
     public String toString() {
-        System.out.println(mReviewTitle);
-        return mReviewTitle.isEmpty() ? "Blank Review " + mDate.toString() : mReviewTitle + " " + mDate.toString();
+        return mReviewTitle.isEmpty() ? "Blank Review " + mDate : mReviewTitle + " " + mDate;
     }
 
     private String generateReviewId() {
         SecureRandom random = new SecureRandom();
-        StringBuilder stringBuilder = new StringBuilder(new BigInteger(48, random).toString(36));
+        StringBuilder stringBuilder = new StringBuilder(new BigInteger(36, 0, random).toString(Character.MAX_RADIX));
         while(stringBuilder.length() > 6) {
             stringBuilder.deleteCharAt(random.nextInt(stringBuilder.length()));
         }
@@ -45,9 +41,7 @@ class LocalReview extends Review {
     }
 
     void setSelectedWifis(ArrayList<String> wifis) { mSelectedWifis = wifis; }
-    void setDatabaseReference(DatabaseReference reference) { mMyRef = reference; }
-    void updateTime() { mDate = new Date(); }
+    void updateTime() { mDate = new Date().toString(); }
 
     ArrayList<String> getSelectedWifis() { return  mSelectedWifis; }
-    DatabaseReference getDatabaseReference() { return mMyRef; }
 }
