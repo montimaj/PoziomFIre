@@ -102,27 +102,19 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         sMyRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String bssid = "";
-                try {
-                    bssid = dataSnapshot.getValue().toString();
-                    bssid = bssid.substring(1, bssid.indexOf('='));
-                } catch (NullPointerException e) { clearListView(); }
-
-                if(mSelectedWifis.contains(bssid)) {
-                    if (dataSnapshot.hasChildren()) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            if (snapshot.hasChildren()) {
-                                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                    Review review = snapshot1.getValue(Review.class);
-                                    if (!sReviewList.contains(review)) {
-                                        sReviewList.add(review);
-                                        mReviewAdapter.notifyDataSetChanged();
-                                    }
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.hasChildren()) {
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                Review review = snapshot1.getValue(Review.class);
+                                if (mSelectedWifis.contains(review.getBssid()) && !sReviewList.contains(review)) {
+                                    sReviewList.add(review);
+                                    mReviewAdapter.notifyDataSetChanged();
                                 }
-                            } else clearListView();
-                        }
-                    } else clearListView();
-                }
+                            }
+                        } else clearListView();
+                    }
+                } else clearListView();
             }
 
             @Override
