@@ -30,7 +30,7 @@ public class ReviewFragment extends Fragment {
     private boolean mIsSaved;
 
     private static ArrayList<LocalReview> sDraftList = new ArrayList<>();
-    static final String[] KEY_SET = {"Title", "Body1", "Body2", "Body3", "Rating"};
+    private static final String[] KEY_SET = {"Title", "Body1", "Body2", "Body3", "Rating"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +133,7 @@ public class ReviewFragment extends Fragment {
         HashSet<String> draftSet = new HashSet<>();
         for(LocalReview review: sDraftList) {
             String gson = new Gson().toJson(review);
+            System.out.println(gson);
             draftSet.add(gson);
         }
         editor.putStringSet("Draft_Set", draftSet);
