@@ -97,7 +97,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initFirebase() {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         sMyRef = database.getReference().child("Users");
         sMyRef.addValueEventListener(new ValueEventListener() {
             @Override
