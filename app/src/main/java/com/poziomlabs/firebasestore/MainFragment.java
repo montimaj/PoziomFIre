@@ -104,15 +104,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (snapshot.hasChildren()) {
-                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                Review review = snapshot1.getValue(Review.class);
-                                if (mSelectedWifis.contains(review.getBssid()) && !sReviewList.contains(review)) {
-                                    sReviewList.add(review);
-                                    mReviewAdapter.notifyDataSetChanged();
+                        if(mSelectedWifis.contains(snapshot.getKey())) {
+                            if (snapshot.hasChildren()) {
+                                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                    Review review = snapshot1.getValue(Review.class);
+                                    if (!sReviewList.contains(review)) {
+                                        sReviewList.add(review);
+                                        mReviewAdapter.notifyDataSetChanged();
+                                    }
                                 }
-                            }
-                        } else clearListView();
+                            } else clearListView();
+                        }
                     }
                 } else clearListView();
             }
