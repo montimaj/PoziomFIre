@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
 
     private class ViewHolder {
         private TextView mTextView;
+        private RatingBar mRatingBar;
     }
 
     @Override
@@ -39,6 +41,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
             convertView = layoutInflater.inflate(R.layout.content_review, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.mTextView = (TextView) convertView.findViewById(R.id.review);
+            viewHolder.mRatingBar = (RatingBar) convertView.findViewById(R.id.ratingBar2);
             convertView.setTag(viewHolder);
         }
         else {
@@ -50,6 +53,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
         if(!reviewList.isEmpty()) {
             Review review = reviewList.get(position);
             viewHolder.mTextView.setText(review.toString());
+            viewHolder.mRatingBar.setRating(review.getRating());
         }
         return convertView;
     }

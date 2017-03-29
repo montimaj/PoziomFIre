@@ -121,7 +121,6 @@ public class ReviewFragment extends Fragment {
         review.setReviewId(mLocalReview.getReviewId());
         DatabaseReference ref = MainFragment.getDatabaseReference();
         for (String bssid : wifis) {
-            review.setBssid(bssid);
             ref.child(bssid).child(review.getReviewId()).setValue(review);
         }
         mIsSaved = true;

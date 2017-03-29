@@ -1,7 +1,6 @@
 package com.poziomlabs.firebasestore;
 
 class Review {
-    private String mBssid;
     private boolean mModeratorFlag;
 
     protected String mReviewTitle;
@@ -15,7 +14,6 @@ class Review {
     public String toString() {
         String s = mReviewTitle;
         s += mReviewBody.length() == 2 ? "" : "\n" + mReviewBody;
-        s += "\nRating: " + mRating;
         return s;
     }
 
@@ -30,14 +28,12 @@ class Review {
 
     public void setTitle(String title) { mReviewTitle = title; }
     public void setBody(String body) { mReviewBody = body; }
-    public void setBssid(String bssid) { mBssid = bssid; }
     public void setReviewId(String id) { mReviewId = id; }
     public void setModeratorFlag(boolean value) { mModeratorFlag = value; }
     public void setRating(float rating) { mRating = rating; }
 
     public String getTitle() { return mReviewTitle; }
     public String getBody() { return mReviewBody; }
-    public String getBssid() { return mBssid; }
     public String getReviewId() { return mReviewId; }
     public float getRating() { return mRating; }
     public boolean getModeratorFlag() { return mModeratorFlag; }

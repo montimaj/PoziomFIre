@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ProgressBar mProgressBar;
     private ReviewAdapter mReviewAdapter;
     private ArrayList<String> mSelectedWifis;
+    private ImageView mImageView;
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static DatabaseReference sMyRef;
@@ -51,8 +53,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         ListView listView = (ListView) view.findViewById(R.id.listView);
         mReviewAdapter = new ReviewAdapter(getActivity(), R.layout.content_review, sReviewList);
         mProgressBar = (ProgressBar) view.findViewById(R.id.Progress);
+        mImageView = (ImageView) view.findViewById(R.id.imageView);
         FloatingActionButton fab1 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton1);
         FloatingActionButton fab2 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
+
+        if(!getReviewList().isEmpty()) {
+            mImageView.setImageResource(R.mipmap.review);
+        } else mImageView.setImageResource(R.mipmap.no_review);
 
         listView.setAdapter(mReviewAdapter);
         listView.setEmptyView(view.findViewById(R.id.Progress));
@@ -109,6 +116,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                     Review review = snapshot1.getValue(Review.class);
                                     if (!sReviewList.contains(review)) {
+                                        mImageView.setImageResource(R.mipmap.review);
                                         sReviewList.add(review);
                                         mReviewAdapter.notifyDataSetChanged();
                                     }
@@ -130,6 +138,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         sReviewList.clear();
         mReviewAdapter.clear();
         mReviewAdapter.notifyDataSetChanged();
+        mImageView.setImageResource(R.mipmap.no_review);
         Toast.makeText(getContext(),"Sorry! No reviews to show", Toast.LENGTH_SHORT).show();
         mProgressBar.setVisibility(View.GONE);
     }
