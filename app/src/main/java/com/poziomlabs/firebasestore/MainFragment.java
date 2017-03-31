@@ -149,11 +149,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         if(mSelectedWifis.contains(snapshot.getKey())) {
                             if (snapshot.hasChildren()) {
                                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                    Review review = snapshot1.getValue(Review.class);
-                                    if (!sReviewList.contains(review)) {
+                                    Review currentReview = snapshot1.getValue(Review.class);
+                                    if (!sReviewList.contains(currentReview)) {
                                         mImageView.setImageResource(R.mipmap.review);
-                                        sReviewList.add(review);
+                                        sReviewList.add(currentReview);
                                         mReviewAdapter.notifyDataSetChanged();
+                                    } else {
+                                        Review prevReview = mReviewAdapter.getItem(mReviewAdapter.getPosition(currentReview));
+                                        if(prevReview != null && !currentReview.toString().
+                                                equalsIgnoreCase(prevReview.toString())) {
+                                            sReviewList.remove(prevReview);
+                                            mReviewAdapter.remove(prevReview);
+                                            sReviewList.add(currentReview);
+                                            mReviewAdapter.notifyDataSetChanged();
+                                        }
                                     }
                                 }
                             } else clearListView();
