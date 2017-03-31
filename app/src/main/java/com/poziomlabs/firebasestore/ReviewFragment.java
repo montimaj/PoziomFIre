@@ -82,7 +82,7 @@ public class ReviewFragment extends Fragment {
                 sDraftList.remove(mLocalReview);
             }
             mLocalReview.updateTime();
-            mLocalReview.setTitle(title);
+            if(!title.isEmpty())    mLocalReview.setTitle(title);
             mLocalReview.setBody(getReviewBody());
             mLocalReview.setRating(rating);
             sDraftList.add(mLocalReview);

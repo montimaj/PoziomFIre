@@ -19,7 +19,8 @@ class DraftsAdapter extends ArrayAdapter<LocalReview> {
     }
 
     private class ViewHolder {
-        private TextView mTextView;
+        private TextView mTitle;
+        private TextView mDate;
     }
 
     @Override
@@ -37,7 +38,8 @@ class DraftsAdapter extends ArrayAdapter<LocalReview> {
             LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
             convertView = layoutInflater.inflate(R.layout.content_draft, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mTextView = (TextView) convertView.findViewById(R.id.draft);
+            viewHolder.mTitle = (TextView) convertView.findViewById(R.id.draft);
+            viewHolder.mDate = (TextView) convertView.findViewById(R.id.draftTime);
             convertView.setTag(viewHolder);
         }
         else {
@@ -48,7 +50,8 @@ class DraftsAdapter extends ArrayAdapter<LocalReview> {
 
         if(!reviewList.isEmpty()) {
             LocalReview review = reviewList.get(position);
-            viewHolder.mTextView.setText(review.toString());
+            viewHolder.mTitle.setText(review.getTitle());
+            viewHolder.mDate.setText(review.getDate());
         }
         return convertView;
     }

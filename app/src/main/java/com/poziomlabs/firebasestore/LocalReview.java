@@ -9,7 +9,10 @@ class LocalReview extends Review {
     private ArrayList<String> mSelectedWifis;
     private String mDate;
 
-    LocalReview() { mReviewId = generateReviewId(); }
+    LocalReview() {
+        mReviewTitle = "Untitled";
+        mReviewId = generateReviewId();
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -18,11 +21,6 @@ class LocalReview extends Review {
         if (getClass() != obj.getClass())   return false;
         LocalReview other = (LocalReview) obj;
         return mReviewId.equals(other.mReviewId);
-    }
-
-    @Override
-    public String toString() {
-        return mReviewTitle.isEmpty() ? "Blank Review " + mDate : mReviewTitle + " " + mDate;
     }
 
     private String generateReviewId() {
@@ -42,6 +40,7 @@ class LocalReview extends Review {
 
     void setSelectedWifis(ArrayList<String> wifis) { mSelectedWifis = wifis; }
     void updateTime() { mDate = new Date().toString(); }
+    String getDate() { return mDate; }
 
     ArrayList<String> getSelectedWifis() { return  mSelectedWifis; }
 }

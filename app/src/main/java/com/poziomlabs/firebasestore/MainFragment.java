@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -63,7 +62,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         FloatingActionButton fab2 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
 
         if(!getReviewList().isEmpty()) {
-            mImageView.setImageResource(R.mipmap.review);
+            mImageView.setImageResource(R.mipmap.savereview);
         } else mImageView.setImageResource(R.mipmap.no_review);
 
         listView.setAdapter(mReviewAdapter);
@@ -151,7 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                     Review currentReview = snapshot1.getValue(Review.class);
                                     if (!sReviewList.contains(currentReview)) {
-                                        mImageView.setImageResource(R.mipmap.review);
+                                        mImageView.setImageResource(R.mipmap.savereview);
                                         sReviewList.add(currentReview);
                                         mReviewAdapter.notifyDataSetChanged();
                                     } else {

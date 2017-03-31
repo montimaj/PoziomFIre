@@ -4,56 +4,68 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
-    <EditText
+    android:background="@android:color/background_light">
+
+    <ImageView
+        android:id="@+id/reviewImg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:src="@mipmap/reviews"
+        tools:ignore="ContentDescription"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
         android:id="@+id/reviewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reviewImg"
         android:hint="@string/title"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp" />
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <EditText
         android:id="@+id/reviewBody1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/reviewGood"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:layout_marginTop="21dp"
-        android:layout_below="@+id/reviewTitle"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/reviewTitle"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:hint="@string/reviewGood"
+        android:inputType="textMultiLine" />
 
     <EditText
         android:id="@+id/reviewBody2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/reviewCons"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:layout_marginTop="21dp"
-        android:layout_below="@+id/reviewBody1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/reviewBody1"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:hint="@string/reviewCons"
+        android:inputType="textMultiLine" />
 
     <EditText
         android:id="@+id/reviewBody3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/reviewOther"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:layout_marginTop="21dp"
-        android:layout_below="@+id/reviewBody2"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/reviewBody2"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:hint="@string/reviewOther"
+        android:inputType="textMultiLine" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
         android:clickable="true"
         app:backgroundTint="?android:attr/colorBackground"
         app:fabSize="normal"
@@ -65,7 +77,7 @@
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="22dp"
         android:layout_below="@+id/reviewBody3"
         android:layout_centerHorizontal="true" />
 

@@ -45,7 +45,7 @@ public class DraftsFragment extends Fragment {
                 }
             });
         } else {
-            Toast.makeText(getContext(), "No drafts!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No reviews!", Toast.LENGTH_SHORT).show();
             getActivity().onBackPressed();
         }
 

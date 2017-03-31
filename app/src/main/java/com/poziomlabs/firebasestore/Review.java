@@ -11,9 +11,7 @@ class Review {
     Review() {}
 
     @Override
-    public String toString() {
-        return mReviewTitle + "\n\n" + mReviewBody;
-    }
+    public String toString() { return mReviewTitle + "\n\n" + mReviewBody; }
 
     @Override
     public boolean equals(Object obj) {
