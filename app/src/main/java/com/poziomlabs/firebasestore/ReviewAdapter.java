@@ -42,6 +42,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
             viewHolder = new ViewHolder();
             viewHolder.mTextView = (TextView) convertView.findViewById(R.id.review);
             viewHolder.mRatingBar = (RatingBar) convertView.findViewById(R.id.ratingBar2);
+            viewHolder.mRatingBar.setIsIndicator(true);
             convertView.setTag(viewHolder);
         }
         else {

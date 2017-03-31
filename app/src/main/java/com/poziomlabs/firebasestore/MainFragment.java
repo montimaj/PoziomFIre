@@ -127,6 +127,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar3);
         ratingBar.setRating(review.getRating());
+        ratingBar.setIsIndicator(true);
 
         mAlertDialog.show();
         mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
