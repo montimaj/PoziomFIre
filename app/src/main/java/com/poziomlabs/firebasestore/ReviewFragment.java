@@ -109,13 +109,13 @@ public class ReviewFragment extends Fragment {
         String comments = mBody3.getText().toString();
         String body = "";
         if(!pros.isEmpty()) {
-            body = "  Pros: " + pros;
+            body = "Pros: " + pros;
         }
         if(!cons.isEmpty()) {
-            body += "\n  " + "Cons: " + cons;
+            body += "\n\n" + "Cons: " + cons;
         }
         if(!comments.isEmpty()) {
-            body += "\n  " + "Other comments: " + comments;
+            body += "\n\n" + "Other comments: " + comments;
         }
         return body;
     }

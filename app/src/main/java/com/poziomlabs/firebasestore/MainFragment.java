@@ -121,14 +121,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         mAlertDialog = new AlertDialog.Builder(getContext())
                 .setView(dialogView)
                 .setTitle("Review Description")
-                .setMessage(review.getTitle())
+                .setMessage(review.toString())
                 .setPositiveButton("OK", null)
                 .setCancelable(true)
                 .create();
 
-        TextView tv = (TextView) dialogView.findViewById(R.id.t1);
         RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar3);
-        tv.setText(review.getBody());
         ratingBar.setRating(review.getRating());
 
         mAlertDialog.show();

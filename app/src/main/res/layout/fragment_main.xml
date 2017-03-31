@@ -57,7 +57,8 @@
         android:layout_above="@+id/Progress"
         android:layout_below="@+id/floatingActionButton1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="14dp" />
+        android:layout_marginBottom="14dp"
+        tools:ignore="ContentDescription" />
 
 
 </RelativeLayout>
