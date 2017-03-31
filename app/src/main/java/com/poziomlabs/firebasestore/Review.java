@@ -12,9 +12,7 @@ class Review {
 
     @Override
     public String toString() {
-        String s = mReviewTitle;
-        s += mReviewBody.length() == 2 ? "" : "\n" + mReviewBody;
-        return s;
+        return "Rating: " + mRating;
     }
 
     @Override

@@ -62,10 +62,8 @@ public class ReviewFragment extends Fragment {
                 if(title.isEmpty()) {
                     Toast.makeText(getContext(), "Title should not be empty!", Toast.LENGTH_SHORT).show();
                 } else {
-                    String body = mBody1.getText().toString() + "\n" + mBody2.getText().toString() +
-                            "\n" + mBody3.getText().toString();
                     mLocalReview.setTitle(title);
-                    mLocalReview.setBody(body);
+                    mLocalReview.setBody(getReviewBody());
                     mLocalReview.setRating(mRatingBar.getRating());
                     saveReview();
                 }
@@ -79,24 +77,20 @@ public class ReviewFragment extends Fragment {
         SharedPreferences.Editor editor = mSharedPrefs.edit();
         if(!mIsSaved) {
             String title = mTitle.getText().toString();
-            String body1 = mBody1.getText().toString();
-            String body2 = mBody2.getText().toString();
-            String body3 = mBody3.getText().toString();
-            String body = body1 + "\n" + body2 + "\n" + body3;
             float rating = mRatingBar.getRating();
             if(sDraftList.contains(mLocalReview)) {
                 sDraftList.remove(mLocalReview);
             }
             mLocalReview.updateTime();
             mLocalReview.setTitle(title);
-            mLocalReview.setBody(body);
+            mLocalReview.setBody(getReviewBody());
             mLocalReview.setRating(rating);
             sDraftList.add(mLocalReview);
 
             editor.putString(KEY_SET[0], title);
-            editor.putString(KEY_SET[1], body1);
-            editor.putString(KEY_SET[2], body2);
-            editor.putString(KEY_SET[3], body3);
+            editor.putString(KEY_SET[1], mBody1.getText().toString());
+            editor.putString(KEY_SET[2], mBody2.getText().toString());
+            editor.putString(KEY_SET[3], mBody3.getText().toString());
             editor.putFloat(KEY_SET[4], rating);
             editor.apply();
             saveDraft();
@@ -108,6 +102,24 @@ public class ReviewFragment extends Fragment {
     }
 
     void setReview(LocalReview review) { mLocalReview = review; }
+
+    private String getReviewBody() {
+        String pros = mBody1.getText().toString();
+        String cons = mBody2.getText().toString();
+        String comments = mBody3.getText().toString();
+        String body = "";
+        if(!pros.isEmpty()) {
+            body = "  Pros: " + pros;
+        }
+        if(!cons.isEmpty()) {
+            body += "\n  " + "Cons: " + cons;
+        }
+        if(!comments.isEmpty()) {
+            body += "\n  " + "Other comments: " + comments;
+        }
+        return body;
+    }
+
     static void setDraftList(ArrayList<LocalReview> drafts) { sDraftList = drafts; }
     static ArrayList<LocalReview> getDraftList() { return sDraftList; }
 

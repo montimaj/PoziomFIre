@@ -6,13 +6,17 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +36,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ReviewAdapter mReviewAdapter;
     private ArrayList<String> mSelectedWifis;
     private ImageView mImageView;
+    private AlertDialog mAlertDialog;
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static DatabaseReference sMyRef;
@@ -63,6 +68,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         listView.setAdapter(mReviewAdapter);
         listView.setEmptyView(view.findViewById(R.id.Progress));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Review review = (Review) adapterView.getAdapter().getItem(i);
+                displayReviewDialog(review);
+            }
+        });
 
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
@@ -103,6 +115,31 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void displayReviewDialog(Review review) {
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+        View dialogView = layoutInflater.inflate(R.layout.content_reviewitem, null);
+        mAlertDialog = new AlertDialog.Builder(getContext())
+                .setView(dialogView)
+                .setTitle("Review Description")
+                .setMessage(review.getTitle())
+                .setPositiveButton("OK", null)
+                .setCancelable(true)
+                .create();
+
+        TextView tv = (TextView) dialogView.findViewById(R.id.t1);
+        RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar3);
+        tv.setText(review.getBody());
+        ratingBar.setRating(review.getRating());
+
+        mAlertDialog.show();
+        mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAlertDialog.dismiss();
+            }
+        });
+    }
+
     private void initFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         sMyRef = database.getReference().child("Users");
@@ -124,6 +161,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                             } else clearListView();
                         }
                     }
+                    if(sReviewList.isEmpty())   clearListView();
                 } else clearListView();
             }
 

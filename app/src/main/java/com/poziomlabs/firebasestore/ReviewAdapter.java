@@ -52,7 +52,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
 
         if(!reviewList.isEmpty()) {
             Review review = reviewList.get(position);
-            viewHolder.mTextView.setText(review.toString());
+            viewHolder.mTextView.setText(review.getTitle());
             viewHolder.mRatingBar.setRating(review.getRating());
         }
         return convertView;
