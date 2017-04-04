@@ -58,8 +58,20 @@
         android:layout_above="@+id/Progress"
         android:layout_below="@+id/floatingActionButton1"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
         android:layout_marginBottom="14dp"
         tools:ignore="ContentDescription" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        app:backgroundTint="@android:color/background_light"
+        app:fabSize="normal"
+        app:srcCompat="@mipmap/my_reviews" />
 
 
 </RelativeLayout>

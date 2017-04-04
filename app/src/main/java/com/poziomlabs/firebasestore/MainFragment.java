@@ -6,6 +6,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ArrayList<String> mSelectedWifis;
     private ImageView mImageView;
     private AlertDialog mAlertDialog;
+    private User mUser;
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static DatabaseReference sMyRef;
@@ -53,13 +55,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         mWifi = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         initWifi();
         initFirebase();
-
         ListView listView = (ListView) view.findViewById(R.id.listView);
         mReviewAdapter = new ReviewAdapter(getActivity(), R.layout.content_review, sReviewList);
         mProgressBar = (ProgressBar) view.findViewById(R.id.Progress);
         mImageView = (ImageView) view.findViewById(R.id.imageView);
         FloatingActionButton fab1 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton1);
         FloatingActionButton fab2 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
+        FloatingActionButton fab3 = (FloatingActionButton) view.findViewById(R.id.floatingActionButton3);
 
         if(!getReviewList().isEmpty()) {
             mImageView.setImageResource(R.mipmap.savereview);
@@ -77,22 +79,32 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
+        fab3.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
+        FragmentManager manager = getActivity().getSupportFragmentManager();
         if(view.getId() == R.id.floatingActionButton2) {
             LocalReview review = new LocalReview();
             review.setSelectedWifis(mSelectedWifis);
+            review.setUser(mUser);
             ReviewFragment reviewFragment = new ReviewFragment();
             reviewFragment.setReview(review);
-            getActivity().getSupportFragmentManager().beginTransaction()
+            manager.beginTransaction()
                     .replace(R.id.content_frame, reviewFragment)
                     .addToBackStack("Reviews")
                     .commit();
-        } else {
-            getActivity().getSupportFragmentManager().beginTransaction()
+        } else if(view.getId() == R.id.floatingActionButton1){
+            manager.beginTransaction()
                     .replace(R.id.content_frame, new DraftsFragment())
+                    .addToBackStack("Reviews")
+                    .commit();
+        } else {
+            SavedReviewFragment savedReviewFragment = new SavedReviewFragment();
+            savedReviewFragment.setUser(mUser);;
+            manager.beginTransaction()
+                    .replace(R.id.content_frame, savedReviewFragment)
                     .addToBackStack("Reviews")
                     .commit();
         }
@@ -178,6 +190,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+    void setUser(User user) { mUser = user; }
 
     private void clearListView() {
         sReviewList.clear();

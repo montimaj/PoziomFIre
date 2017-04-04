@@ -6,12 +6,15 @@ class Review {
     protected String mReviewTitle;
     protected String mReviewBody;
     protected String mReviewId;
+    protected User mUser;
     protected float mRating;
 
     Review() {}
 
     @Override
-    public String toString() { return mReviewTitle + "\n\n" + mReviewBody; }
+    public String toString() {
+        return mReviewTitle + "\n\n" + "User: " + mUser.getUserName() + "\n\n" + mReviewBody;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -27,10 +30,12 @@ class Review {
     public void setReviewId(String id) { mReviewId = id; }
     public void setModeratorFlag(boolean value) { mModeratorFlag = value; }
     public void setRating(float rating) { mRating = rating; }
+    public void setUser(User user) { mUser = user; }
 
     public String getTitle() { return mReviewTitle; }
     public String getBody() { return mReviewBody; }
     public String getReviewId() { return mReviewId; }
     public float getRating() { return mRating; }
+    public User getUser() { return mUser; }
     public boolean getModeratorFlag() { return mModeratorFlag; }
 }

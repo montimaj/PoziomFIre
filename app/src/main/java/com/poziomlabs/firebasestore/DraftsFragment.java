@@ -25,12 +25,12 @@ public class DraftsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_drafts, container, false);
-        ListView listView = (ListView) view.findViewById(R.id.draftView);
         ArrayList<LocalReview> drafts =  !ReviewFragment.getDraftList().isEmpty() ?
                 ReviewFragment.getDraftList() : loadDrafts();
         if(!drafts.isEmpty()) {
             DraftsAdapter draftsAdapter = new DraftsAdapter(getActivity(),
                     R.layout.content_draft, drafts);
+            ListView listView = (ListView) view.findViewById(R.id.draftView);
             listView.setAdapter(draftsAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -45,7 +45,7 @@ public class DraftsFragment extends Fragment {
                 }
             });
         } else {
-            Toast.makeText(getContext(), "No reviews!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No drafts!", Toast.LENGTH_SHORT).show();
             getActivity().onBackPressed();
         }
 

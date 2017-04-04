@@ -17,50 +17,72 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
-        android:id="@+id/reviewTitle"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/reviewImg"
-        android:hint="@string/title"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:id="@+id/textInput1"
+        android:layout_below="@+id/reviewImg">
 
-    <EditText
-        android:id="@+id/reviewBody1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/reviewTitle"
-        android:layout_marginTop="21dp"
-        android:ems="10"
-        android:hint="@string/reviewGood"
-        android:inputType="textMultiLine" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/title"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="0dp" />
+    </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/reviewBody2"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/reviewBody1"
-        android:layout_marginTop="21dp"
-        android:ems="10"
-        android:hint="@string/reviewCons"
-        android:inputType="textMultiLine" />
+        android:id="@+id/textInput2"
+        android:layout_below="@+id/textInput1" >
 
-    <EditText
-        android:id="@+id/reviewBody3"
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="21dp"
+            android:ems="10"
+            android:hint="@string/reviewGood"
+            android:inputType="textMultiLine" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/reviewBody2"
-        android:layout_marginTop="21dp"
-        android:ems="10"
-        android:hint="@string/reviewOther"
-        android:inputType="textMultiLine" />
+        android:id="@+id/textInput3"
+        android:layout_below="@+id/textInput2" >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="21dp"
+            android:ems="10"
+            android:hint="@string/reviewCons"
+            android:inputType="textMultiLine" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textInput4"
+        android:layout_below="@+id/textInput3" >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="21dp"
+            android:ems="10"
+            android:hint="@string/reviewOther"
+            android:inputType="textMultiLine" />
+
+    </android.support.design.widget.TextInputLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -78,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:layout_below="@+id/reviewBody3"
+        android:layout_below="@+id/textInput4"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

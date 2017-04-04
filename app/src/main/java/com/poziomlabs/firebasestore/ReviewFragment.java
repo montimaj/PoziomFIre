@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class ReviewFragment extends Fragment {
     private boolean mIsSaved;
 
     private static ArrayList<LocalReview> sDraftList = new ArrayList<>();
+    private static ArrayList<Review> sSavedReviewList = new ArrayList<>();
     private static final String[] KEY_SET = {"Title", "Body1", "Body2", "Body3", "Rating"};
 
     @Override
@@ -38,17 +40,26 @@ public class ReviewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_review, container, false);
         mFab = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
         mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
-        mTitle = (EditText) view.findViewById(R.id.reviewTitle);
-        mBody1 = (EditText) view.findViewById(R.id.reviewBody1);
-        mBody2 = (EditText) view.findViewById(R.id.reviewBody2);
-        mBody3 = (EditText) view.findViewById(R.id.reviewBody3);
-        mSharedPrefs = getActivity().getSharedPreferences(mLocalReview.getReviewId(), Context.MODE_PRIVATE);
 
+        TextInputLayout textInputLayout = (TextInputLayout) view.findViewById(R.id.textInput1);
+        mTitle = textInputLayout.getEditText();
+
+        textInputLayout = (TextInputLayout) view.findViewById(R.id.textInput2);
+        mBody1 = textInputLayout.getEditText();
+
+        textInputLayout = (TextInputLayout) view.findViewById(R.id.textInput3);
+        mBody2 = textInputLayout.getEditText();
+
+        textInputLayout = (TextInputLayout) view.findViewById(R.id.textInput4);
+        mBody3 = textInputLayout.getEditText();
+
+        mSharedPrefs = getActivity().getSharedPreferences(mLocalReview.getReviewId(), Context.MODE_PRIVATE);
         mTitle.setText(mSharedPrefs.getString(KEY_SET[0],""));
         mBody1.setText(mSharedPrefs.getString(KEY_SET[1], ""));
         mBody2.setText(mSharedPrefs.getString(KEY_SET[2], ""));
         mBody3.setText(mSharedPrefs.getString(KEY_SET[3], ""));
         mRatingBar.setRating(mSharedPrefs.getFloat(KEY_SET[4], 0f));
+
         return view;
     }
 
@@ -102,6 +113,11 @@ public class ReviewFragment extends Fragment {
     }
 
     void setReview(LocalReview review) { mLocalReview = review; }
+    /*void setReview(Review review) {
+        mLocalReview = new LocalReview();
+        mLocalReview.setUser(review.getUser());
+        mLocalReview.set
+    }*/
 
     private String getReviewBody() {
         String pros = mBody1.getText().toString();
@@ -121,7 +137,9 @@ public class ReviewFragment extends Fragment {
     }
 
     static void setDraftList(ArrayList<LocalReview> drafts) { sDraftList = drafts; }
+    static void setSavedReviewList(ArrayList<Review> reviews) { sSavedReviewList = reviews; }
     static ArrayList<LocalReview> getDraftList() { return sDraftList; }
+    static ArrayList<Review> getSavedReviewList() { return sSavedReviewList; }
 
     private void saveReview() {
         ArrayList<String> wifis = mLocalReview.getSelectedWifis();
@@ -131,6 +149,9 @@ public class ReviewFragment extends Fragment {
         review.setRating(mLocalReview.getRating());
         review.setModeratorFlag(false);
         review.setReviewId(mLocalReview.getReviewId());
+        review.setUser(mLocalReview.getUser());
+        sSavedReviewList.add(review);
+        storeReview();
         DatabaseReference ref = MainFragment.getDatabaseReference();
         for (String bssid : wifis) {
             ref.child(bssid).child(review.getReviewId()).setValue(review);
@@ -144,10 +165,21 @@ public class ReviewFragment extends Fragment {
         HashSet<String> draftSet = new HashSet<>();
         for(LocalReview review: sDraftList) {
             String gson = new Gson().toJson(review);
-            System.out.println(gson);
             draftSet.add(gson);
         }
         editor.putStringSet("Draft_Set", draftSet);
+        editor.apply();
+    }
+
+    private void storeReview() {
+        mSharedPrefs = getActivity().getSharedPreferences("Saved", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        HashSet<String> reviewSet = new HashSet<>();
+        for(Review review: sSavedReviewList) {
+            String gson = new Gson().toJson(review);
+            reviewSet.add(gson);
+        }
+        editor.putStringSet("Review_Set", reviewSet);
         editor.apply();
     }
 }
