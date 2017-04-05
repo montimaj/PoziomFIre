@@ -113,11 +113,6 @@ public class ReviewFragment extends Fragment {
     }
 
     void setReview(LocalReview review) { mLocalReview = review; }
-    /*void setReview(Review review) {
-        mLocalReview = new LocalReview();
-        mLocalReview.setUser(review.getUser());
-        mLocalReview.set
-    }*/
 
     private String getReviewBody() {
         String pros = mBody1.getText().toString();
@@ -128,10 +123,12 @@ public class ReviewFragment extends Fragment {
             body = "Pros: " + pros;
         }
         if(!cons.isEmpty()) {
-            body += "\n\n" + "Cons: " + cons;
+            if(!pros.isEmpty()) body += "\n\n";
+            body += "Cons: " + cons;
         }
         if(!comments.isEmpty()) {
-            body += "\n\n" + "Other comments: " + comments;
+            if(!cons.isEmpty()) body += "\n\n";
+            body += "Other comments: " + comments;
         }
         return body;
     }

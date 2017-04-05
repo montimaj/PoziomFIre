@@ -32,6 +32,7 @@ public class SavedReviewFragment extends Fragment {
                 ReviewFragment.getSavedReviewList() : loadSavedReviews();
         if(!myReviews.isEmpty()) {
             ReviewAdapter reviewAdapter = new ReviewAdapter(getActivity(), R.layout.content_review, myReviews);
+            reviewAdapter.setShowUserReviews();
             ListView listView = (ListView) view.findViewById(R.id.listView1);
             listView.setAdapter(reviewAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -54,7 +55,7 @@ public class SavedReviewFragment extends Fragment {
         ArrayList<Review> reviews = new ArrayList<>();
         if(!reviewSet.isEmpty()) {
             for (String gson : reviewSet) {
-                Review review = new Gson().fromJson(gson, LocalReview.class);
+                Review review = new Gson().fromJson(gson, Review.class);
                 reviews.add(review);
             }
         } else {

@@ -14,10 +14,13 @@ import java.util.ArrayList;
 class ReviewAdapter extends ArrayAdapter<Review> {
 
     private Activity mActivity;
+    private ArrayList<Review> mReviewList;
+    private boolean mShowUserReviews;
 
     ReviewAdapter(Activity activity, int textViewResourceId, ArrayList<Review> arrayList) {
         super(activity, textViewResourceId, arrayList);
         mActivity = activity;
+        mReviewList = arrayList;
     }
 
     private class ViewHolder {
@@ -28,7 +31,7 @@ class ReviewAdapter extends ArrayAdapter<Review> {
     @Override
     public int getCount() {
         super.getCount();
-        return MainFragment.getReviewList().size();
+        return mShowUserReviews ? mReviewList.size() : MainFragment.getReviewList().size();
     }
 
     @NonNull
@@ -48,14 +51,14 @@ class ReviewAdapter extends ArrayAdapter<Review> {
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-        ArrayList<Review> reviewList = MainFragment.getReviewList();
-
-        if(!reviewList.isEmpty()) {
+        ArrayList<Review> reviewList = mShowUserReviews ? mReviewList : MainFragment.getReviewList();
+        if (!reviewList.isEmpty()) {
             Review review = reviewList.get(position);
             viewHolder.mTextView.setText(review.getTitle());
             viewHolder.mRatingBar.setRating(review.getRating());
         }
         return convertView;
     }
+
+    void setShowUserReviews() { mShowUserReviews = true; }
 }
