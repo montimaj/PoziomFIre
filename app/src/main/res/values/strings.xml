@@ -25,4 +25,5 @@
     <string name="welcome_to_poziomfire">Welcome to PoziomFire</string>
     <string name="sign_out">Sign Out</string>
     <string name="my_reviews">My Reviews</string>
+    <string name="allow_review">Allow review</string>
 </resources>

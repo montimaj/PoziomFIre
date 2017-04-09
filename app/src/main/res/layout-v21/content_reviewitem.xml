@@ -8,6 +8,17 @@
         style="@style/Widget.AppCompat.RatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:progressBackgroundTint="@color/colorPrimary"
+        android:layout_below="@+id/switch1"
         android:layout_centerHorizontal="true"
-        android:progressBackgroundTint="@color/colorPrimary" />
+        android:layout_marginTop="15dp" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/allow_review"
+        android:layout_marginTop="13dp"
+        android:textSize="18sp"/>
 </RelativeLayout>

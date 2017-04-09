@@ -2,11 +2,9 @@ package com.poziomlabs.firebasestore;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Date;
 
 class LocalReview extends Review {
-    private ArrayList<String> mSelectedWifis;
     private String mDate;
 
     LocalReview() {
@@ -38,9 +36,6 @@ class LocalReview extends Review {
         return stringBuilder.toString();
     }
 
-    void setSelectedWifis(ArrayList<String> wifis) { mSelectedWifis = wifis; }
     void updateTime() { mDate = new Date().toString(); }
     String getDate() { return mDate; }
-
-    ArrayList<String> getSelectedWifis() { return  mSelectedWifis; }
 }

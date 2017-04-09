@@ -8,15 +8,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -31,9 +34,9 @@ import java.util.List;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
-    private WifiManager mWifi;
     private ProgressBar mProgressBar;
     private ReviewAdapter mReviewAdapter;
+    private TextView mTextView;
     private ArrayList<String> mSelectedWifis;
     private ImageView mImageView;
     private AlertDialog mAlertDialog;
@@ -41,6 +44,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private static ArrayList<Review> sReviewList = new ArrayList<>();
     private static DatabaseReference sMyRef;
+    private static final String[] ADMIN_USERS = {"rachit.iitkgp@gmail.com", "monti.majumdar@gmail.com"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +56,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mWifi = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         initWifi();
         initFirebase();
         ListView listView = (ListView) view.findViewById(R.id.listView);
@@ -111,9 +114,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initWifi() {
-        mWifi.setWifiEnabled(true);
-        mWifi.startScan();
-        List<ScanResult> results = mWifi.getScanResults();
+        final WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+        wifiManager.startScan();
+        List<ScanResult> results = wifiManager.getScanResults();
         mSelectedWifis = new ArrayList<>();
         for (ScanResult result : results) {
             int level = WifiManager.calculateSignalLevel(result.level, 5);
@@ -126,7 +130,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void displayReviewDialog(Review review) {
+    private void displayReviewDialog(final Review review) {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         View dialogView = layoutInflater.inflate(R.layout.content_reviewitem, null);
         mAlertDialog = new AlertDialog.Builder(getContext())
@@ -140,6 +144,24 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar3);
         ratingBar.setRating(review.getRating());
         ratingBar.setIsIndicator(true);
+
+        SwitchCompat switchCompat = (SwitchCompat) dialogView.findViewById(R.id.switch1);
+        if(isAdmin()) {
+            switchCompat.setChecked(review.getModeratorFlag());
+            switchCompat.setVisibility(View.VISIBLE);
+            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    ArrayList<String> wifis = review.getSelectedWifis();
+                    if(isChecked) {
+                        review.setModeratorFlag(true);
+                    } else  review.setModeratorFlag(false);
+                    for (String bssid : wifis) {
+                        sMyRef.child(bssid).child(review.getReviewId()).setValue(review);
+                    }
+                }
+            });
+        } else  switchCompat.setVisibility(View.GONE);
 
         mAlertDialog.show();
         mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -158,24 +180,15 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if(mSelectedWifis.contains(snapshot.getKey())) {
+                        if(isAdmin() || mSelectedWifis.contains(snapshot.getKey())) {
                             if (snapshot.hasChildren()) {
                                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                     Review currentReview = snapshot1.getValue(Review.class);
-                                    if (!sReviewList.contains(currentReview)) {
-                                        mImageView.setImageResource(R.mipmap.savereview);
-                                        sReviewList.add(currentReview);
-                                        mReviewAdapter.notifyDataSetChanged();
-                                    } else {
-                                        Review prevReview = mReviewAdapter.getItem(mReviewAdapter.getPosition(currentReview));
-                                        if(prevReview != null && !currentReview.toString().
-                                                equalsIgnoreCase(prevReview.toString())) {
-                                            sReviewList.remove(prevReview);
-                                            mReviewAdapter.remove(prevReview);
-                                            sReviewList.add(currentReview);
-                                            mReviewAdapter.notifyDataSetChanged();
+                                    if(!isAdmin()) {
+                                        if(currentReview.getModeratorFlag() || currentReview.getUser().equals(mUser)) {
+                                            showReviews(currentReview);
                                         }
-                                    }
+                                    } else showReviews(currentReview);
                                 }
                             } else clearListView();
                         }
@@ -200,6 +213,27 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         mImageView.setImageResource(R.mipmap.no_review);
         Toast.makeText(getContext(),"Sorry! No reviews to show", Toast.LENGTH_SHORT).show();
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    private boolean isAdmin() {
+        return ADMIN_USERS[0].equals(mUser.getUserEmail()) || ADMIN_USERS[1].equals(mUser.getUserEmail());
+    }
+
+    private void showReviews(Review currentReview) {
+        if (!sReviewList.contains(currentReview)) {
+            mImageView.setImageResource(R.mipmap.savereview);
+            sReviewList.add(currentReview);
+            mReviewAdapter.notifyDataSetChanged();
+        } else {
+            Review prevReview = mReviewAdapter.getItem(mReviewAdapter.getPosition(currentReview));
+            if (prevReview != null && !currentReview.toString().
+                    equalsIgnoreCase(prevReview.toString())) {
+                sReviewList.remove(prevReview);
+                mReviewAdapter.remove(prevReview);
+                sReviewList.add(currentReview);
+                mReviewAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     static ArrayList<Review> getReviewList() { return sReviewList; }

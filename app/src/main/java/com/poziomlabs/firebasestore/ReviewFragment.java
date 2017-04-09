@@ -147,6 +147,8 @@ public class ReviewFragment extends Fragment {
         review.setModeratorFlag(false);
         review.setReviewId(mLocalReview.getReviewId());
         review.setUser(mLocalReview.getUser());
+        review.setSelectedWifis(wifis);
+        System.out.println(wifis);
         sSavedReviewList.add(review);
         storeReview();
         DatabaseReference ref = MainFragment.getDatabaseReference();

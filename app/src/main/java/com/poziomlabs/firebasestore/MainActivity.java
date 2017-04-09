@@ -2,6 +2,7 @@ package com.poziomlabs.firebasestore;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.Manifest;
@@ -24,6 +25,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -35,15 +44,16 @@ import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
     private ProgressBar mProgressBar;
     private User mUser;
 
-    private static final int REQUEST_INTERNET_ACCESS = 1001;
+    private static final String TAG = "MainActivity";
+    private static final int REQUEST_CHECK_SETTINGS = 1 ;
     private static final int RC_SIGN_IN = 1002 ;
+    private static final int REQUEST_MULTIPLE_PERMISSIONS_ACCESS = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getInternetPermission();
+            displayLocationSettingsRequest(getApplicationContext());
         }
 
         String gson = getSharedPreferences("Login", Context.MODE_PRIVATE).getString("User", null);
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUEST_INTERNET_ACCESS: {
+            case REQUEST_MULTIPLE_PERMISSIONS_ACCESS: {
                 if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission denied!", Toast.LENGTH_LONG).show();
                 }
@@ -149,11 +160,13 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.CHANGE_WIFI_STATE) == PackageManager.PERMISSION_GRANTED);
         boolean hasPermission3 = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermission1 || !hasPermission2 || !hasPermission3) {
+        boolean hasPermission4 = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission1 || !hasPermission2 || !hasPermission3 || !hasPermission4) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.INTERNET, Manifest.permission.CHANGE_WIFI_STATE,
-                            Manifest.permission.ACCESS_WIFI_STATE},
-                    REQUEST_INTERNET_ACCESS);
+                            Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_MULTIPLE_PERMISSIONS_ACCESS);
         }
     }
 
@@ -208,6 +221,47 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void displayLocationSettingsRequest(Context context) {
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API).build();
+        googleApiClient.connect();
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(@NonNull LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // in onActivityResult().
+                            status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        break;
+                }
+            }
+        });
     }
 
     private void showMainFragment() {

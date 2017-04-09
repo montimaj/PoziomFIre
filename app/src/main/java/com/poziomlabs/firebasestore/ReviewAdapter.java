@@ -54,7 +54,9 @@ class ReviewAdapter extends ArrayAdapter<Review> {
         ArrayList<Review> reviewList = mShowUserReviews ? mReviewList : MainFragment.getReviewList();
         if (!reviewList.isEmpty()) {
             Review review = reviewList.get(position);
-            viewHolder.mTextView.setText(review.getTitle());
+            String s = review.getTitle();
+            if(!review.getModeratorFlag())  s += "\nStatus: Pending";
+            viewHolder.mTextView.setText(s);
             viewHolder.mRatingBar.setRating(review.getRating());
         }
         return convertView;

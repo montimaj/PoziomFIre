@@ -1,11 +1,14 @@
 package com.poziomlabs.firebasestore;
 
+import java.util.ArrayList;
+
 class Review {
     private boolean mModeratorFlag;
 
     protected String mReviewTitle;
     protected String mReviewBody;
     protected String mReviewId;
+    protected ArrayList<String> mSelectedWifis;
     protected User mUser;
     protected float mRating;
 
@@ -31,6 +34,7 @@ class Review {
     public void setModeratorFlag(boolean value) { mModeratorFlag = value; }
     public void setRating(float rating) { mRating = rating; }
     public void setUser(User user) { mUser = user; }
+    public void setSelectedWifis(ArrayList<String> wifis) { mSelectedWifis = wifis; }
 
     public String getTitle() { return mReviewTitle; }
     public String getBody() { return mReviewBody; }
@@ -38,4 +42,5 @@ class Review {
     public float getRating() { return mRating; }
     public User getUser() { return mUser; }
     public boolean getModeratorFlag() { return mModeratorFlag; }
+    public ArrayList<String> getSelectedWifis() { return  mSelectedWifis; }
 }
