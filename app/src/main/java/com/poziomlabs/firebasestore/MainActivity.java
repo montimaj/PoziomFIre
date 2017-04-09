@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         googleApiClient.connect();
 
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(10000 / 2);
 
