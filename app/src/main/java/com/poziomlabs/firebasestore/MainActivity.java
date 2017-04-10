@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.Manifest;
 import android.os.Build;
@@ -75,6 +76,19 @@ public class MainActivity extends AppCompatActivity {
             showMainFragment();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+    }
+
 
     @Override
     public void onBackPressed() {

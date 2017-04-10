@@ -70,9 +70,9 @@ public class SavedReviewFragment extends Fragment {
         return reviews;
     }
 
-    private void displayReviewDialog(Review review) {
+    private void displayReviewDialog(final Review review) {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View dialogView = layoutInflater.inflate(R.layout.content_reviewitem, null);
+        View dialogView = layoutInflater.inflate(R.layout.content_savedreviews, null);
         mAlertDialog = new AlertDialog.Builder(getContext())
                 .setView(dialogView)
                 .setTitle("Review Description")
@@ -81,7 +81,7 @@ public class SavedReviewFragment extends Fragment {
                 .setCancelable(true)
                 .create();
 
-        RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar3);
+        RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.ratingBar4);
         ratingBar.setRating(review.getRating());
         ratingBar.setIsIndicator(true);
 
