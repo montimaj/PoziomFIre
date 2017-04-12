@@ -216,7 +216,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean isAdmin() {
-        return ADMIN_USERS[0].equals(mUser.getUserEmail()) || ADMIN_USERS[1].equals(mUser.getUserEmail());
+        String userEmail = mUser.getUserEmail();
+        for(String adminEmail: ADMIN_USERS) {
+            if(adminEmail.equals(userEmail))    return true;
+        }
+        return false;
     }
 
     private void showReviews(Review currentReview) {
